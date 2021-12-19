@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from pandas.plotting import scatter_matrix
 from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, mean_squared_error
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import GradientBoostingClassifier
@@ -23,6 +23,8 @@ def test_classifier(clf, X, y):
     end = time.time()
 
     print("Accuracy: {0:.2%}".format(accuracy_score(prediction, y_test)))
+    # print("MSE: {0:.2%}".format(mean_squared_error(y_test, prediction, squared=False)))
+    print("MSE: {0:.2%}".format(mean_squared_error(y_test, prediction)))
     print("Cross validation score: {0:.2%} (+/- {1:.2%})".format(np.mean(scores), np.std(scores) * 2))
     print("Execution time: {0:.5} seconds \n".format(end - start))
 
@@ -40,6 +42,7 @@ def get_best_parameters_clf(clf, X, y, parameters):
     end = time.time()
 
     print("Accuracy: {0:.2%}".format(accuracy_score(prediction, y_test)))
+    print("MSE: {0:.2%}".format(mean_squared_error(y_test, prediction)))
     print("Cross validation score: {0:.2%} (+/- {1:.2%})".format(np.mean(scores), np.std(scores) * 2))
     print("Execution time: {0:.5} seconds \n".format(end - start))
 
@@ -89,6 +92,7 @@ print('KNeighborsClassifier:')
 test_classifier(KNeighborsClassifier(), X, y)
 print('----------------------------------------------------')
 print('GaussianNB:')
+# test_classifier(GaussianNB(priors=[0.2, 0.8]), X, y)
 test_classifier(GaussianNB(), X, y)
 print('----------------------------------------------------')
 print('GradientBoostingClassifier:')
@@ -97,14 +101,27 @@ print('----------------------------------------------------')
 
 print('------------CALCULATING THE BEST PARAMETERS FOR CLASSIFIERS-------------')
 print('KNeighborsClassifier:')
-parameters = {'n_neighbors': list(range(1, 5)), 'algorithm': ['auto', 'ball_tree', 'kd_tree', 'brute'], 'p': [1, 2]}
-get_best_parameters_clf(KNeighborsClassifier(), X, y, parameters)
+parameters = {'n_neighbors': list(range(1, 5)), 'algorithm': ['auto', 'ball_tree', 'kd_tree', 'brute'], 'p': [1, 2, 3]}
+bp_k_neib = get_best_parameters_clf(KNeighborsClassifier(), X, y, parameters)
 print('----------------------------------------------------')
 print('GaussianNB:')
-parameters = {'priors': [[0.01, 0.99], [0.1, 0.9], [0.2, 0.8], [0.25, 0.75], [0.3, 0.7], [0.35, 0.65], [0.4, 0.6]]}
-get_best_parameters_clf(GaussianNB(), X, y, parameters)
+parameters = {
+    'priors': [None, [0.01, 0.99], [0.1, 0.9], [0.2, 0.8], [0.25, 0.75], [0.3, 0.7], [0.35, 0.65], [0.4, 0.6]]}
+bp_gauss = get_best_parameters_clf(GaussianNB(), X, y, parameters)
 print('----------------------------------------------------')
 print('GradientBoostingClassifier:')
-parameters = {'max_depth': list(range(3, 10)), 'criterion': ['friedman_mse', 'squared_error']}
-get_best_parameters_clf(GradientBoostingClassifier(), X, y, parameters)
+parameters = {'max_depth': list(range(3, 10)), 'criterion': ['friedman_mse', 'squared_error'],
+              'loss': ['deviance', 'exponential']}
+bp_boost = get_best_parameters_clf(GradientBoostingClassifier(), X, y, parameters)
+print('----------------------------------------------------')
+
+print('------------TESTING WITH CALCULATED PARAMETERS-------------')
+print('KNeighborsClassifier:')
+test_classifier(KNeighborsClassifier(algorithm='auto', n_neighbors=4, p=2), X, y)
+print('----------------------------------------------------')
+print('GaussianNB:')
+test_classifier(GaussianNB(priors=None), X, y)
+print('----------------------------------------------------')
+print('GradientBoostingClassifier:')
+test_classifier(GradientBoostingClassifier(criterion='friedman_mse', max_depth=3), X, y)
 print('----------------------------------------------------')
