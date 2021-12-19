@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, mean_squared_error
 from sklearn.cluster import KMeans, AgglomerativeClustering
 from sklearn import preprocessing
 from sklearn_extra.cluster import KMedoids
@@ -35,6 +35,7 @@ kmeans.fit(X_train)
 prediction = kmeans.predict(X_test)
 
 print("Accuracy: {0:.2%}".format(accuracy_score(prediction, y_test)))
+print("MSE: {0:.2%}".format(mean_squared_error(y_test, prediction)))
 print('----------------------------------------------------')
 
 
@@ -62,7 +63,8 @@ def plot_dendrogram(model, **kwargs):
 model = AgglomerativeClustering(distance_threshold=0, n_clusters=None)
 model = model.fit(X)
 
-plt.figure(figsize=(15, 15))
+# plt.figure(figsize=(15, 15))
+plt.figure()
 plt.grid(True)
 plt.title('Dendrogram')
 plot_dendrogram(model, truncate_mode='level', p=15)
@@ -72,6 +74,7 @@ print('AgglomerativeClustering (tree): ')
 model = AgglomerativeClustering(n_clusters=2)
 prediction = model.fit_predict(X)
 print("Accuracy: {0:.2%}".format(accuracy_score(prediction, y)))
+print("MSE: {0:.2%}".format(mean_squared_error(y, prediction)))
 print('----------------------------------------------------')
 
 print('KMedoids: ')
@@ -79,4 +82,5 @@ kmedoids = KMedoids(n_clusters=2, random_state=0)
 kmedoids.fit(X_train)
 prediction = kmedoids.predict(X_test)
 print("Accuracy: {0:.2%}".format(accuracy_score(prediction, y_test)))
+print("MSE: {0:.2%}".format(mean_squared_error(y_test, prediction)))
 print('----------------------------------------------------')
