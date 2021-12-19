@@ -1,4 +1,4 @@
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, mean_squared_error
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
 import pandas as pd
@@ -37,7 +37,8 @@ def get_KNeighborsClf_accuracy(X_train, X_test, y_train, y_test):
     clf.fit(X_train, y_train)
     prediction = clf.predict(X_test)
 
-    return accuracy_score(prediction, y_test)
+    return accuracy_score(prediction, y_test), mean_squared_error(y_test, prediction)
+
 
 
 data = pd.read_csv('C:/Users/FedozZz/PycharmProjects/machine-learning-coursework/data/data.csv')
@@ -78,8 +79,10 @@ model.fit(x_train, y_train, epochs=120, verbose=0)
 X_train_coded = model.predict(x_train)
 X_test_coded = model.predict(x_test)
 
-print("Dimension reduction Accuracy: {0:.2%}".format(
-    get_KNeighborsClf_accuracy(X_train_coded, X_test_coded, y_train, y_test)))
+acc, mse = get_KNeighborsClf_accuracy(X_train_coded, X_test_coded, y_train, y_test)
+
+print("Dimension reduction Accuracy: {0:.2%}".format(acc))
+print("MSE: {0:.2%}".format(mse))
 
 X_coded = model.predict(X)
 
@@ -101,7 +104,10 @@ model.fit(x_train, y_train, epochs=120, verbose=0)
 X_train_coded = model.predict(x_train)
 X_test_coded = model.predict(x_test)
 
-print("Sparse Accuracy: {0:.2%}".format(get_KNeighborsClf_accuracy(X_train_coded, X_test_coded, y_train, y_test)))
+acc, mse = get_KNeighborsClf_accuracy(X_train_coded, X_test_coded, y_train, y_test)
+
+print("Sparse Accuracy: {0:.2%}".format(acc))
+print("MSE: {0:.2%}".format(mse))
 
 X_coded = model.predict(X)
 plot_TNSE(X_coded, y)
@@ -122,7 +128,9 @@ model.fit(x_train, y_train, epochs=120, verbose=0)
 X_train_coded = model.predict(x_train)
 X_test_coded = model.predict(x_test)
 
-print("Denoising Accuracy: {0:.2%}".format(get_KNeighborsClf_accuracy(X_train_coded, X_test_coded, y_train, y_test)))
+acc, mse = get_KNeighborsClf_accuracy(X_train_coded, X_test_coded, y_train, y_test)
+print("Denoising Accuracy: {0:.2%}".format(acc))
+print("MSE: {0:.2%}".format(mse))
 
 X_coded = model.predict(X)
 plot_TNSE(X_coded, y)

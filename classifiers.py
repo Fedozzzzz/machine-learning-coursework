@@ -23,7 +23,6 @@ def test_classifier(clf, X, y):
     end = time.time()
 
     print("Accuracy: {0:.2%}".format(accuracy_score(prediction, y_test)))
-    # print("MSE: {0:.2%}".format(mean_squared_error(y_test, prediction, squared=False)))
     print("MSE: {0:.2%}".format(mean_squared_error(y_test, prediction)))
     print("Cross validation score: {0:.2%} (+/- {1:.2%})".format(np.mean(scores), np.std(scores) * 2))
     print("Execution time: {0:.5} seconds \n".format(end - start))
